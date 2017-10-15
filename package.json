@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "assert-plus": "^1.0.0",
     "bunyan": "^1.8.12",
     "ffi": "^2.2.0",
     "http-signature": "^1.2.0",
-    "restify": "^6.0.1"
+    "restify": "^6.0.1",
+    "sshpk": "^1.13.1"
   }
 }

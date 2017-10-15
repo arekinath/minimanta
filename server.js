@@ -1,8 +1,11 @@
 var mod_restify = require('restify');
 var mod_bunyan = require('bunyan');
+var mod_fs = require('fs');
+var mod_assert = require('assert-plus');
 
 var lib_handlers = require('./lib/handlers');
 var lib_auth = require('./lib/auth');
+var lib_utils = require('./lib/utils');
 
 var log = mod_bunyan.createLogger({
 	name: 'minimanta'
@@ -14,49 +17,62 @@ var server = mod_restify.createServer({
 	log: log
 });
 
+var config = JSON.parse(mod_fs.readFileSync('config.json', 'utf-8'));
+mod_assert.object(config, 'config');
+mod_assert.notStrictEqual(config, null);
+mod_assert.number(config.port, 'config.port');
+mod_assert.string(config.root, 'config.root');
+
+config.log = log;
+config.server = server;
+
+var auth = new lib_auth.AuthProvider(config);
+var handlers = new lib_handlers.HandlerProvider(config);
+
 server.use(mod_restify.queryParser());
-server.use(lib_auth.authorizationParser);
-server.use(lib_auth.presignParser);
+server.use(auth.parseAuthorization.bind(auth));
+server.use(auth.parsePresigned.bind(auth));
+
+server.use(function splitPath(req, res, next) {
+	req.splitPath = new lib_utils.SplitPath(config, req);
+	if (!req.splitPath.isValid()) {
+		next(new mod_restify.BadRequestError());
+		return;
+	}
+	next();
+});
 
 server.put({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'PutDirectory',
 	contentType: 'application/json; type=directory'
-}, lib_handlers.putDirectory);
+}, handlers.putDirectory.bind(handlers));
 
 server.put({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'PutLink',
 	contentType: 'application/json; type=link'
-}, lib_handlers.putLink);
+}, handlers.putLink.bind(handlers));
 
 server.put({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'PutObject',
 	contentType: '*/*'
-}, lib_handlers.putObject);
+}, handlers.putObject.bind(handlers));
 
 server.get({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'GetObject'
-}, lib_handlers.getObject);
+}, handlers.getObject.bind(handlers));
 
 server.head({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'HeadObject'
-}, lib_handlers.headObject);
+}, handlers.headObject.bind(handlers));
 
 server.del({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'DeleteObject'
-}, lib_handlers.deleteObject);
+}, handlers.deleteObject.bind(handlers));
 
 server.opts({
-	path: /^[/][^/]+[/][^/]+[/]/,
 	name: 'OptionsObject'
-}, lib_handlers.cors);
+}, handlers.cors.bind(handlers));
 
-var port = 8080;
-server.listen(port, function () {
-	log.info('listening on port %d', port);
+server.listen(config.port, function () {
+	log.info('listening on port %d', config.port);
 });
