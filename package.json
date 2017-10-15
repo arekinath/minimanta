@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "bunyan": "^1.8.12",
+    "ffi": "^2.2.0",
     "http-signature": "^1.2.0",
     "restify": "^6.0.1"
   }
