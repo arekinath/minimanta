@@ -35,17 +35,19 @@ var auth = new lib_auth.AuthProvider(config);
 var handlers = new lib_handlers.HandlerProvider(config);
 
 server.use(mod_restify.plugins.queryParser());
-server.use(auth.parseAuthorization.bind(auth));
-server.use(auth.parsePresigned.bind(auth));
 
 server.use(function splitPath(req, res, next) {
-	req.splitPath = new lib_utils.SplitPath(config, req);
+	req.splitPath = new lib_utils.SplitPath(config, req.path());
 	if (!req.splitPath.isValid()) {
-		next(new mod_rerrors.BadRequestError());
+		next(new mod_rerrors.BadRequestError('Invalid Manta path'));
 		return;
 	}
 	next();
 });
+
+server.use(auth.parseAuthorization.bind(auth));
+server.use(auth.parsePresigned.bind(auth));
+server.use(auth.authorize.bind(auth));
 
 server.put({
 	path: /^/,
