@@ -14,6 +14,9 @@
     "ffi": "^2.2.0",
     "http-signature": "^1.2.0",
     "restify": "^6.0.1",
-    "sshpk": "^1.13.1"
+    "restify-errors": "^5.0.0",
+    "sshpk": "^1.13.1",
+    "vasync": "^2.1.0",
+    "verror": "^1.10.0"
   }
 }
