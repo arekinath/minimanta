@@ -87,7 +87,7 @@ server.opts({
 	name: 'OptionsObject'
 }, handlers.cors.bind(handlers));
 
-server.listen(config.port, function () {
+server.listen(config.port, config.host, function () {
 	log.info('listening on port %d', config.port);
 });
 
