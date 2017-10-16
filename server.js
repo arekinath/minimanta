@@ -33,6 +33,9 @@ config.server = server;
 
 var auth = new lib_auth.AuthProvider(config);
 var handlers = new lib_handlers.HandlerProvider(config);
+var mime = new lib_utils.MimeTypeDb(config);
+
+config.mime = mime;
 
 server.use(mod_restify.plugins.queryParser());
 

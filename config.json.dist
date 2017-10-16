@@ -1,5 +1,6 @@
 {
 	"host": "127.0.0.1",
 	"port": 8080,
-	"root": "/home"
+	"root": "/home",
+	"mime_db": "/opt/local/etc/nginx/mime.types"
 }
