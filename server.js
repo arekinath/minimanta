@@ -96,6 +96,7 @@ server.listen(config.port, config.host, function () {
 
 server.on('after', function (req, res, route, err) {
 	var info = {};
+	info.audit = true;
 	info.req = {
 		method: req.method,
 		url: req.url,
