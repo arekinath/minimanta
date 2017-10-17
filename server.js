@@ -28,6 +28,13 @@ mod_assert.notStrictEqual(config, null);
 mod_assert.number(config.port, 'config.port');
 mod_assert.string(config.root, 'config.root');
 
+if (process.argv[2] !== undefined) {
+	var v = parseInt(process.argv[2], 10);
+	if (isFinite(v)) {
+		config.port = v;
+	}
+}
+
 config.log = log;
 config.server = server;
 
