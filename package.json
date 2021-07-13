@@ -2,12 +2,16 @@
   "name": "minimanta",
   "version": "1.0.0",
   "description": "",
+  "repository": "https://github.com/arekinath/minimanta",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "<=10"
+  },
   "dependencies": {
     "assert-plus": "^1.0.0",
     "bunyan": "^1.8.12",
