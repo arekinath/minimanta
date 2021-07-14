@@ -1,0 +1,57 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+  <service name='triton/application/minimanta' type='service' version='0'>
+    <dependency name='network' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/network/physical'/>
+    </dependency>
+    <dependency name='filesystem' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='mdata' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/smartdc/mdata:execute'/>
+    </dependency>
+    <!-- No config-agent yet
+         Someday this might get promoted to a full Triton service.
+    <dependency name='config-agent' grouping='optional_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/smartdc/application/config-agent'/>
+    </dependency>
+    -->
+    <exec_method name='start' type='method' exec='node --abort-on-uncaught-exception server.js %{minimanta/port} &amp;' timeout_seconds='30'>
+      <method_context working_directory='__DIRECTORY__'>
+        <method_environment>
+          <envvar name='PATH' value='/opt/local/bin:/usr/bin:/usr/sbin:/bin'/>
+          <envvar name='NODE_NDEBUG' value='1'/>
+        </method_environment>
+      </method_context>
+    </exec_method>
+    <exec_method name='stop' type='method' exec=':kill' timeout_seconds='30'/>
+    <exec_method name='refresh' type='method' exec=':kill -HUP' timeout_seconds='30'/>
+    <instance name='minimanta-8081' enabled='true'>
+      <property_group name='minimanta' type='application'>
+        <propval name='port' type='astring' value='8081'/>
+      </property_group>
+    </instance>
+    <instance name='minimanta-8082' enabled='true'>
+      <property_group name='minimanta' type='application'>
+        <propval name='port' type='astring' value='8082'/>
+      </property_group>
+    </instance>
+    <instance name='minimanta-8083' enabled='true'>
+      <property_group name='minimanta' type='application'>
+        <propval name='port' type='astring' value='8083'/>
+      </property_group>
+    </instance>
+    <instance name='minimanta-8084' enabled='true'>
+      <property_group name='minimanta' type='application'>
+        <propval name='port' type='astring' value='8084'/>
+      </property_group>
+    </instance>
+    <stability value='Unstable'/>
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>Joyent Single-Zone Manta-Comptible Storage Service</loctext>
+      </common_name>
+    </template>
+  </service>
+</service_bundle>
